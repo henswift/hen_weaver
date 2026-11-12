@@ -1,38 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hen_weaver</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        
-        img {
-            width: 100px;        
-            height: auto;
-            border-radius: 30%;    
-            margin-bottom: 30px;   
-        }
-        
-        .text {
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1rem;  
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hen_weaver</title>
+<meta name="description" content="hen_weaver's corner of the internet.">
+<meta name="theme-color" content="#008080">
+<link rel="icon" href="profile.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #008080;
+    --face: #c0c0c0;
+    --hi: #ffffff;
+    --lo: #808080;
+    --dark: #0a0a0a;
+    --navy: #000080;
+    --blue: #1084d0;
+    --note: #ffffe1;
+    --ui: Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
+    --pixel: "VT323", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--desk);
+    font-family: var(--ui);
+    font-size: 13px;
+    color: #000;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  body.party { animation: hue 2s linear infinite; }
+  @keyframes hue { to { filter: hue-rotate(360deg); } }
+
+  /* raised / sunken bevels */
+  .raised {
+    background: var(--face);
+    box-shadow: inset -1px -1px var(--dark), inset 1px 1px var(--hi),
+                inset -2px -2px var(--lo), inset 2px 2px #dfdfdf;
+  }
+  .sunken {
+    box-shadow: inset 1px 1px var(--lo), inset -1px -1px var(--hi),
+                inset 2px 2px var(--dark), inset -2px -2px #dfdfdf;
+  }
+
+  /* desktop */
+  #desktop {
+    position: fixed; inset: 0 0 36px 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px;
+  }
+  .icons {
+    position: absolute; top: 14px; left: 10px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .icon {
+    width: 76px; padding: 4px 2px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: #fff; text-decoration: none; text-align: center;
+    font-size: 12px; border: 1px dotted transparent;
+  }
+  .icon svg { width: 34px; height: 34px; image-rendering: pixelated; }
+  .icon span { padding: 1px 3px; }
+  .icon:hover span, .icon:focus-visible span { background: var(--navy); }
+  .icon:focus-visible { outline: none; border-color: #fff; }
+
+  /* window */
+  .window {
+    position: relative;
+    width: min(420px, 100%);
+    padding: 3px;
+    touch-action: none;
+  }
+  .titlebar {
+    display: flex; align-items: center; gap: 6px;
+    height: 24px; padding: 0 3px 0 6px;
+    background: linear-gradient(90deg, var(--navy), var(--blue));
+    color: #fff; font-weight: bold; letter-spacing: .2px;
+    cursor: grab;
+  }
+  .titlebar:active { cursor: grabbing; }
+  .titlebar img { width: 16px; height: 16px; background: #fff; }
+  .titlebar .title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-btn {
+    width: 18px; height: 16px; padding: 0; border: 0;
+    font: bold 11px/1 var(--ui); color: #000; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .tb-btn:active, .btn:active {
+    box-shadow: inset 1px 1px var(--dark), inset -1px -1px var(--hi),
+                inset 2px 2px var(--lo), inset -2px -2px #dfdfdf;
+  }
+  .menubar { display: flex; gap: 2px; padding: 3px 2px; }
+  .menubar span { padding: 1px 6px; }
+  .menubar span::first-letter { text-decoration: underline; }
+
+  .content { margin: 0 2px 2px; padding: 18px 16px 16px; background: #fff; text-align: center; }
+
+  .assistant { display: flex; align-items: flex-start; justify-content: center; gap: 4px; min-height: 132px; }
+  .assistant img {
+    width: 120px; height: 120px; flex: none; cursor: pointer;
+    animation: bob 3s steps(6) infinite;
+  }
+  .assistant img.wiggle { animation: wiggle .5s steps(4); }
+  @keyframes bob { 50% { transform: translateY(-5px); } }
+  @keyframes wiggle { 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+  .bubble {
+    position: relative; flex: 1; max-width: 210px; margin-top: 8px;
+    padding: 9px 10px; text-align: left;
+    background: var(--note); border: 1px solid #000; border-radius: 8px;
+    font-size: 12px; line-height: 1.4;
+  }
+  .bubble::before, .bubble::after {
+    content: ""; position: absolute; top: 22px; border: 8px solid transparent; border-left: 0;
+  }
+  .bubble::before { left: -9px; border-right-color: #000; }
+  .bubble::after  { left: -7px; border-right-color: var(--note); }
+
+  h1 {
+    margin: 10px 0 0; font: 400 46px/1 var(--pixel); letter-spacing: 1px;
+  }
+  h1 .cursor { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .tagline { margin: 4px 0 16px; font: 400 20px/1.1 var(--pixel); color: #444; }
+
+  .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    min-width: 128px; padding: 8px 14px;
+    color: #000; text-decoration: none; font: 13px var(--ui);
+  }
+  .btn svg { width: 15px; height: 15px; }
+  .btn:focus-visible { outline: 1px dotted #000; outline-offset: -5px; }
+
+  .statusbar { display: flex; gap: 2px; margin: 0 2px 2px; }
+  .statusbar div { padding: 3px 6px; background: var(--face); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .statusbar div:first-child { flex: 1; }
+
+  /* taskbar */
+  #taskbar {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 36px;
+    display: flex; align-items: center; gap: 6px; padding: 4px;
+    border-top: 1px solid var(--hi);
+    background: var(--face);
+  }
+  #start { min-width: 0; height: 28px; padding: 0 8px; font-weight: bold; border: 0; cursor: pointer; }
+  #start svg { width: 18px; height: 18px; }
+  .task {
+    height: 28px; padding: 0 8px; display: flex; align-items: center; gap: 6px;
+    flex: 0 1 170px; min-width: 0; font-weight: bold; background: #dcdcdc;
+  }
+  .task img { width: 16px; height: 16px; background: #fff; }
+  .task span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #tray { margin-left: auto; height: 28px; padding: 0 10px; display: flex; align-items: center; }
+
+  @media (max-width: 560px) {
+    .icons { display: none; }
+    h1 { font-size: 38px; }
+    .tagline { font-size: 17px; }
+    .assistant img { width: 96px; height: 96px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .assistant img, h1 .cursor, body.party { animation: none; }
+  }
+</style>
 </head>
 <body>
-    <img src="profile.jpeg" alt="Profile picture">
-    <div class="text">hen_weaver</div>
+
+<main id="desktop">
+  <nav class="icons" aria-label="Desktop shortcuts">
+    <a class="icon" href="https://x.com/hen_weaver" target="_blank" rel="noopener me">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" fill="#000"/><path d="M3 3h2l8 10h-2z" fill="#fff"/><path d="M12 3h1L4 13H3z" fill="#fff"/></svg>
+      <span>X</span>
+    </a>
+    <a class="icon" href="https://github.com/henswift" target="_blank" rel="noopener me">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3h5l1 2h8v9H1z" fill="#ffd75e" stroke="#000" stroke-width=".7"/><path d="M1 6h14" stroke="#000" stroke-width=".7"/></svg>
+      <span>GitHub</span>
+    </a>
+  </nav>
+
+  <section class="window raised" id="win" aria-label="hen_weaver">
+    <div class="titlebar" id="drag">
+      <img src="profile.jpeg" alt="">
+      <span class="title">hen_weaver.exe</span>
+      <button class="tb-btn raised" id="min" aria-label="Minimize">_</button>
+      <button class="tb-btn raised" id="close" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
+
+    <div class="content sunken">
+      <div class="assistant">
+        <img id="clip" src="profile.jpeg" alt="hen_weaver's profile picture: a paperclip with a moustache" title="click me">
+        <p class="bubble" id="bubble" aria-live="polite">It looks like you're visiting a website. Would you like help?</p>
+      </div>
+      <h1>hen_weaver<span class="cursor" aria-hidden="true">_</span></h1>
+      <p class="tagline">a small corner of the internet</p>
+      <div class="links">
+        <a class="btn raised" href="https://x.com/hen_weaver" target="_blank" rel="noopener me">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h3l9 12h-3z"/><path d="M13 2h1.5L4 14H2.5z"/></svg>X
+        </a>
+        <a class="btn raised" href="https://github.com/henswift" target="_blank" rel="noopener me">
+          <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="#000" stroke-width="1.6"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4"/></svg>GitHub
+        </a>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="sunken" id="status">Ready</div>
+      <div class="sunken" id="visits">Visit #1</div>
+    </div>
+  </section>
+</main>
+
+<footer id="taskbar">
+  <button id="start" class="raised btn" aria-label="Start">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="6" height="6" fill="#e53935"/><rect x="9" y="1" width="6" height="6" fill="#43a047"/><rect x="1" y="9" width="6" height="6" fill="#1e88e5"/><rect x="9" y="9" width="6" height="6" fill="#fdd835"/></svg>Start
+  </button>
+  <div class="task sunken" id="task"><img src="profile.jpeg" alt=""><span>hen_weaver.exe</span></div>
+  <div id="tray" class="sunken"><time id="clock">12:00 PM</time></div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var win = $('win'), bubble = $('bubble'), clip = $('clip'), status = $('status');
+
+  /* clock */
+  function tick() {
+    $('clock').textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  tick(); setInterval(tick, 10000);
+
+  /* per-browser visit counter (stays on this device) */
+  try {
+    var n = (parseInt(localStorage.getItem('visits'), 10) || 0) + 1;
+    localStorage.setItem('visits', n);
+    $('visits').textContent = 'Visit #' + n;
+  } catch (e) {}
+
+  /* the paperclip has opinions */
+  var tips = [
+    "It looks like you're visiting a website. Would you like help?",
+    "Tip: you can drag this window around by its title bar.",
+    "Tip: the links below open in a new tab. Very modern.",
+    "I used to live in a word processor. This is nicer.",
+    "Best viewed at 800 × 600 in 256 colours.",
+    "Have you tried turning it off and on again?",
+    "Psst. ↑ ↑ ↓ ↓ ← → ← → B A.",
+    "Please stop poking me."
+  ];
+  var tip = 0;
+  function say(text) { bubble.textContent = text; }
+  function nextTip() {
+    tip = (tip + 1) % tips.length;
+    say(tips[tip]);
+    clip.classList.remove('wiggle'); void clip.offsetWidth; clip.classList.add('wiggle');
+  }
+  clip.addEventListener('click', nextTip);
+
+  /* status bar hints */
+  document.querySelectorAll('a').forEach(function (a) {
+    var show = function () { status.textContent = a.href.replace('https://', ''); };
+    var hide = function () { status.textContent = 'Ready'; };
+    a.addEventListener('mouseenter', show); a.addEventListener('focus', show);
+    a.addEventListener('mouseleave', hide); a.addEventListener('blur', hide);
+  });
+
+  /* draggable window */
+  var x = 0, y = 0, sx, sy, dragging = false;
+  $('drag').addEventListener('pointerdown', function (e) {
+    if (e.target.closest('button')) return;
+    dragging = true; sx = e.clientX - x; sy = e.clientY - y;
+    this.setPointerCapture(e.pointerId);
+  });
+  $('drag').addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var r = win.getBoundingClientRect(), nx = e.clientX - sx, ny = e.clientY - sy;
+    var left = r.left - x + nx, top = r.top - y + ny;
+    if (left < -r.width + 60) nx += -r.width + 60 - left;
+    if (left > innerWidth - 60) nx -= left - (innerWidth - 60);
+    if (top < 0) ny -= top;
+    if (top > innerHeight - 70) ny -= top - (innerHeight - 70);
+    x = nx; y = ny;
+    win.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+  });
+  var stop = function () { dragging = false; };
+  $('drag').addEventListener('pointerup', stop);
+  $('drag').addEventListener('pointercancel', stop);
+
+  /* window buttons */
+  function toggle(show) {
+    win.hidden = !show;
+    $('task').classList.toggle('sunken', show);
+    $('task').classList.toggle('raised', !show);
+  }
+  $('min').addEventListener('click', function () { toggle(false); });
+  $('task').addEventListener('click', function () { toggle(win.hidden); });
+  $('close').addEventListener('click', function () { say("Nice try. This is the whole website."); });
+  $('start').addEventListener('click', function () {
+    toggle(true); say("There is no Start menu. There is only me.");
+  });
+
+  /* konami code */
+  var code = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'], pos = 0;
+  addEventListener('keydown', function (e) {
+    var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    pos = (k === code[pos]) ? pos + 1 : (k === code[0] ? 1 : 0);
+    if (pos === code.length) {
+      pos = 0;
+      var on = document.body.classList.toggle('party');
+      say(on ? "PARTY MODE ENABLED. I always knew you had it in you." : "Party's over. Back to work.");
+    }
+  });
+})();
+</script>
 </body>
 </html>
